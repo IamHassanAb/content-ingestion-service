@@ -1,0 +1,63 @@
+from pydantic import BaseModel, HttpUrl
+from typing import Optional
+
+
+class LectureDetailsBySubCategoryRequest(BaseModel):
+    Page: int
+    PageSize: int
+    ScholarId: int
+
+
+class Category(BaseModel):
+    id: int
+    name: str
+
+
+class Scholar(BaseModel):
+    id: int
+    name: str
+    city: str
+    country: str
+    language: str
+
+
+class Centre(BaseModel):
+    id: int
+    name: str
+    city: str
+    country: str
+
+
+class CreatedBy(BaseModel):
+    id: int
+    fullName: str
+    userName: str
+    email: str
+
+
+class UpdatedBy(BaseModel):
+    id: int
+    fullName: str
+    userName: str
+    email: str
+
+
+class LectureDetailsBySubCategoryResponse(BaseModel):
+    id: int
+    subCategory: str
+    title: str
+    itemDate: str
+    islamicDate: str
+    language: str
+    link: HttpUrl
+    views: Optional[int] = None
+    audioFile: Optional[str] = None
+    imageFile: Optional[str] = None
+    isDone: Optional[bool] = None
+    category: Category
+    centre: Centre
+    scholar: Scholar
+    createdAt: Optional[str] = None
+    updatedAt: Optional[str] = None
+    createdBy: CreatedBy
+    updatedBy: UpdatedBy

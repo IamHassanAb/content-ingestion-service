@@ -5,10 +5,14 @@ from datetime import datetime
 
 # ---------- Submodels ----------
 
+
 class Author(BaseModel):
     id: Optional[Union[str, int]] = None
     name: str
-    role: Optional[str] = Field(default="unknown", regex="^(scholar|writer|translator|compiler|speaker|unknown)$")
+    role: Optional[str] = Field(
+        default="unknown",
+        regex="^(scholar|writer|translator|compiler|speaker|unknown)$",
+    )
     city: Optional[str] = None
     country: Optional[str] = None
     language: Optional[str] = None
@@ -41,12 +45,6 @@ class DateInfo(BaseModel):
 class Content(BaseModel):
     summary: Optional[str] = None
     tags: List[str] = []
-    transcriptFile: Optional[str] = None
-    hasTranscript: bool = False
-    duration: Optional[str] = None   # HH:MM:SS
-    textChunks: List[str] = []
-
-    # 🚀 NEW
     translations: Optional[Dict[str, str]] = None
 
 
@@ -71,6 +69,7 @@ class Provenance(BaseModel):
 
 
 # ---------- Main Schema ----------
+
 
 class ItemSchema(BaseModel):
     id: Union[str, int]
