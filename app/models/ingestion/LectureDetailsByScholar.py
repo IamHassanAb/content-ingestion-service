@@ -2,7 +2,7 @@ from pydantic import BaseModel, HttpUrl
 from typing import Optional
 
 
-class LectureDetailsBySubCategoryRequest(BaseModel):
+class LectureDetailsByScholarRequest(BaseModel):
     Page: int
     PageSize: int
     ScholarId: int
@@ -41,13 +41,12 @@ class UpdatedBy(BaseModel):
     userName: str
     email: str
 
-
-class LectureDetailsBySubCategoryResponse(BaseModel):
+class LectureDetailsByScholarResponse(BaseModel):
     id: int
     subCategory: str
     title: str
-    itemDate: str
-    islamicDate: str
+    itemDate: Optional[str] = None
+    islamicDate: Optional[str] = None
     language: str
     link: HttpUrl
     views: Optional[int] = None
@@ -59,5 +58,5 @@ class LectureDetailsBySubCategoryResponse(BaseModel):
     scholar: Scholar
     createdAt: Optional[str] = None
     updatedAt: Optional[str] = None
-    createdBy: CreatedBy
-    updatedBy: UpdatedBy
+    createdBy: Optional[CreatedBy] = None
+    updatedBy: Optional[UpdatedBy] = None

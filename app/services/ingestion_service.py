@@ -3,9 +3,9 @@ from typing import List
 from ..utils.constants import *
 import logging
 import os
-from ..models.ingestion.LectureDetailsBySubCategory import (
-    LectureDetailsBySubCategoryRequest,
-    LectureDetailsBySubCategoryResponse,
+from ..models.ingestion.LectureDetailsByScholar import (
+    LectureDetailsByScholarRequest,
+    LectureDetailsByScholarResponse,
 )
 from ..models.ingestion.Translation import (
     TranslationServiceRequest,
@@ -14,11 +14,11 @@ from ..models.ingestion.Translation import (
 
 
 def get_lecture_details(
-    request: LectureDetailsBySubCategoryRequest,
-) -> List[LectureDetailsBySubCategoryResponse] | None:
+    request: LectureDetailsByScholarRequest,
+) -> List[LectureDetailsByScholarResponse] | None:
     try:
         logging.info(f"{RPIN} : {request.model_dump()}")
-        url = os.getenv("HYDER_AI_SC_URL")
+        url = os.getenv("HYDER_AI_LECTURE_DETAILS_BY_SCHOLAR_URL")
         headers = {
             "accept": "application/json, text/plain, */*",
             "origin": "https://www.hyder.ai",
@@ -33,8 +33,8 @@ def get_lecture_details(
         r.raise_for_status()  # Raises HTTPError if status != 200
 
         lecture_items = [
-            LectureDetailsBySubCategoryResponse(**item)
-            for item in r.json().get("items", [])
+            LectureDetailsByScholarResponse(**item)
+            for item in r.json()[0].get("items", [])
         ]
 
         logging.info(f"{RPOUT} : {lecture_items}")
