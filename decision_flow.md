@@ -32,7 +32,7 @@
 
 
 
-
+---
 ### Decision Framework for /get-data Scheduling
                    ┌───────────────────────────────────┐
                    │ How often does data actually      │
@@ -66,3 +66,59 @@
   └────────────────────┘
 
 
+
+
+---
+### Flowchart: FastAPI + Celery Beat + RabbitMQ + Workers
+
+                   ┌───────────────────────────────┐
+                   │      Consumer / Client        │
+                   │ - Calls FastAPI endpoints     │
+                   │   (e.g., GET /translations)  │
+                   └─────────────┬─────────────────┘
+                                 │
+                                 ▼
+                     ┌─────────────────────────┐
+                     │     FastAPI Service      │
+                     │ - Exposes endpoints      │
+                     │ - Reads from DB / cache │
+                     │ - Optional endpoint:     │
+                     │   trigger fetch manually │
+                     └─────────────┬───────────┘
+                                   │
+                                   ▼
+                     ┌─────────────────────────┐
+                     │       DB / Cache        │
+                     │ - Stores translation    │
+                     │   results               │
+                     │ - Tracks processed IDs  │
+                     └─────────────┬───────────┘
+                                   │
+                                   ▼
+                     ┌─────────────────────────┐
+                     │    Celery Workers       │
+                     │ - Pull item_id from     │
+                     │   RabbitMQ queue       │
+                     │ - Call /translate API  │
+                     │ - Store results in DB  │
+                     │ - Retry failed tasks   │
+                     │ - Rate-limited to avoid│
+                     │   overwhelming API     │
+                     └─────────────┬───────────┘
+                                   │
+                                   ▼
+                     ┌─────────────────────────┐
+                     │   RabbitMQ Queue        │
+                     │ - Stores tasks for each │
+                     │   item_id               │
+                     └─────────────┬───────────┘
+                                   │
+                                   ▼
+                     ┌─────────────────────────┐
+                     │     Celery Beat         │
+                     │ - Scheduler (internal) │
+                     │ - Triggers fetch_get_data│
+                     │   periodically         │
+                     │ - Pushes new items to  │
+                     │   RabbitMQ queue       │
+                     └─────────────────────────┘
