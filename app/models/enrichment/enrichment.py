@@ -11,3 +11,4 @@ class MetaDataEnrichmentRequest(BaseModel):
 class MetaDataEnrichmentResponse(BaseModel):
     tags: List[str] = Field(description="The list of tags extracted from the content.")
     summary: str = Field(description="A brief summary generated from the content.")
+
