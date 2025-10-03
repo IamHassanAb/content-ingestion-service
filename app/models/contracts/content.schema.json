@@ -1,0 +1,132 @@
+{
+  "$schema": "http://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.com/islamic-content.schema.json",
+  "title": "Islamic Knowledge Item",
+  "description": "A unified schema for lectures, books, blogs, articles, tafseer, and hadith references in a RAG pipeline.",
+  "type": "object",
+  "required": ["id", "title", "type", "language", "author", "date"],
+  
+  "properties": {
+    "id": {
+      "type": ["string", "integer"],
+      "description": "Unique identifier for the item"
+    },
+    "title": {
+      "type": "string",
+      "description": "Title of the item"
+    },
+    "type": {
+      "type": "string",
+      "enum": ["lecture", "book", "blog", "article", "tafseer", "hadith", "note"],
+      "description": "Type of content"
+    },
+    "language": {
+      "type": "string",
+      "description": "Primary language of the content (ISO 639-1)"
+    },
+    
+    "author": {
+      "type": "object",
+      "required": ["name"],
+      "properties": {
+        "id": { "type": ["string", "integer"] },
+        "name": { "type": "string" },
+        "role": { 
+          "type": "string",
+          "enum": ["scholar", "writer", "translator", "compiler", "speaker", "unknown"],
+          "default": "unknown"
+        },
+        "city": { "type": ["string", "null"] },
+        "country": { "type": ["string", "null"] },
+        "language": { "type": ["string", "null"] }
+      }
+    },
+    
+    "organisation": {
+      "type": "object",
+      "properties": {
+        "id": { "type": ["string", "integer", "null"] },
+        "name": { "type": ["string", "null"] },
+        "city": { "type": ["string", "null"] },
+        "country": { "type": ["string", "null"] }
+      }
+    },
+
+    "quranReference": {
+      "type": ["object", "null"],
+      "properties": {
+        "surah": { "type": ["string", "integer"] },
+        "ayahStart": { "type": "integer" },
+        "ayahEnd": { "type": "integer" }
+      }
+    },
+
+    "hadithReference": {
+      "type": ["object", "null"],
+      "properties": {
+        "book": { "type": "string" },
+        "volume": { "type": ["string", "null"] },
+        "hadithNumber": { "type": ["string", "null"] }
+      }
+    },
+    
+    "date": {
+      "type": "object",
+      "required": ["gregorian"],
+      "properties": {
+        "gregorian": { "type": "string", "format": "date-time" },
+        "islamic": { "type": ["string", "null"] }
+      }
+    },
+    
+    "content": {
+      "type": "object",
+      "properties": {
+        "summary": { "type": ["string", "null"] },
+        "tags": { "type": "array", "items": { "type": "string" } },
+        "transcriptFile": { "type": ["string", "null"] },
+        "hasTranscript": { "type": "boolean", "default": false },
+        "duration": { "type": ["string", "null"], "description": "HH:MM:SS format for media" },
+        "textChunks": { "type": "array", "items": { "type": "string" } },
+        "translations": {
+          "type": "object",
+          "description": "Optional translations of the content title or summary",
+          "additionalProperties": { "type": "string" },
+          "example": {
+              "en": "Exegesis of the Quran | Surah Al-Baqara | Verses 3-4",
+              "ur": "تفسیر قرآن | سورۃ البقرہ | آیات ۳-۴"
+          }
+        }
+      }
+    },
+    
+    "media": {
+      "type": "object",
+      "properties": {
+        "audioFile": { "type": ["string", "null"] },
+        "videoFile": { "type": ["string", "null"] },
+        "imageFile": { "type": ["string", "null"] },
+        "pdfFile": { "type": ["string", "null"] },
+        "link": { "type": ["string", "null"], "format": "uri" }
+      }
+    },
+    
+    "audience": {
+      "type": "object",
+      "properties": {
+        "level": { "type": "string", "enum": ["beginner", "intermediate", "advanced", "all"], "default": "all" },
+        "intendedAudience": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    
+    "provenance": {
+      "type": "object",
+      "properties": {
+        "createdBy": { "type": ["string", "null"] },
+        "updatedBy": { "type": ["string", "null"] },
+        "createdAt": { "type": ["string", "null"], "format": "date-time" },
+        "updatedAt": { "type": ["string", "null"], "format": "date-time" }
+      }
+    }
+  }
+}
