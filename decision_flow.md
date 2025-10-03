@@ -122,3 +122,52 @@
                      │ - Pushes new items to  │
                      │   RabbitMQ queue       │
                      └─────────────────────────┘
+
+
+
+
+### Flowchart: New Architecutre Plan 
+
+               ┌─────────────────────────────┐
+               │  Scheduler (Airflow/Celery) │
+               │  - Runs get_lecture_details │
+               │  - Every weekend            │
+               └───────────────┬─────────────┘
+                               │
+                               ▼
+                 ┌─────────────────────────────┐
+                 │ FastAPI Service / Collector │
+                 │ - Calls get_lecture_details │
+                 │ - Stores raw data in Mongo  │
+                 │ - Enqueues NEW item_ids →   │
+                 │   RabbitMQ queue            │
+                 └───────────────┬─────────────┘
+                                 │
+               ┌─────────────────┴──────────────────┐
+               │                                    │
+       ┌───────────────┐                    ┌───────────────┐
+       │ Worker 1      │                    │ Worker N      │
+       │ - Pull item_id│                    │ - Pull item_id│
+       │   from queue  │                    │   from queue  │
+       │ - translate_text()                 │ - translate_text()
+       │ - merge enriched data              │ - merge enriched data
+       │   with Mongo record                │   with Mongo record
+       │ - insert into "lectures_trans"     │ - insert into "lectures_trans"
+       └────────────────┬───────────────────┘
+                        │
+                        ▼
+              ┌────────────────────┐
+              │ MongoDB Database   │
+              │ - Collection:      │
+              │   lectures_raw     │
+              │   (fetched weekly) │
+              │ - Collection:      │
+              │   lectures_trans   │
+              │   (translated &    │
+              │    enriched data)  │
+              └────────────────────┘
+
+
+
+
+
