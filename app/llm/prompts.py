@@ -1,8 +1,12 @@
-from app.models.enrichment.enrichment import MetaDataEnrichmentRequest, MetaDataEnrichmentResponse 
+from app.models.enrichment.enrichment import (
+    MetaDataEnrichmentRequest,
+    MetaDataEnrichmentResponse,
+)
+
 
 def get_prompt(input: MetaDataEnrichmentRequest) -> str:
-     """Generate the prompt for metadata enrichment."""
-     return f'''You are a metadata enrichment assistant.
+    """Generate the prompt for metadata enrichment."""
+    return f"""You are a metadata enrichment assistant.
 
 Input (JSON): {MetaDataEnrichmentRequest(**input).model_dump_json()}
 Output (JSON) must follow this schema:
@@ -22,4 +26,4 @@ Rules:
 5. Do not include any fields other than `tags` and `summary`.
 
 Now transform the provided input JSON into the required output JSON.
-'''
+"""

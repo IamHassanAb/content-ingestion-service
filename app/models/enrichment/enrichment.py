@@ -1,6 +1,5 @@
-from typing import List, Optional, Dict, Union
-from pydantic import BaseModel, Field, HttpUrl
-from datetime import datetime
+from typing import List
+from pydantic import BaseModel, Field
 
 
 class MetaDataEnrichmentRequest(BaseModel):
@@ -11,4 +10,3 @@ class MetaDataEnrichmentRequest(BaseModel):
 class MetaDataEnrichmentResponse(BaseModel):
     tags: List[str] = Field(description="The list of tags extracted from the content.")
     summary: str = Field(description="A brief summary generated from the content.")
-

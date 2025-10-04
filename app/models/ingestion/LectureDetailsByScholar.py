@@ -41,6 +41,7 @@ class UpdatedBy(BaseModel):
     userName: str
     email: str
 
+
 class LectureDetailsByScholarResponse(BaseModel):
     id: int
     subCategory: str

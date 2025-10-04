@@ -6,7 +6,7 @@ from app.models.enrichment.enrichment import MetaDataEnrichmentRequest
 
 def get_enricher_response(input: MetaDataEnrichmentRequest) -> str:
     client = Groq(
-    api_key=os.environ.get("GROQ_API_KEY"),
+        api_key=os.environ.get("GROQ_API_KEY"),
     )
     chat_completion = client.chat.completions.create(
         messages=[
