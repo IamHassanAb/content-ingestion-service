@@ -6,7 +6,7 @@ from app.models.enrichment.Translation import (
     TranslationServiceRequest,
     TranslationServiceResponse,
 )
-from app.services.enrichment_service import translate_text, enrich_metadata
+from app.services.enrichment_service import translate_text, get_enrichment_components
 from app.models.pipeline.Pipeline import PipelineRequest, PipelineResponse
 import logging
 from app.utils.constants import RPIN, RPOUT
@@ -31,8 +31,10 @@ def run_pipeline(pipelineRequest: PipelineRequest) -> PipelineResponse:
         content=translateServiceResponse.translation,
     )
     metaDataEnrichmentResponse = MetaDataEnrichmentResponse.model_validate(
-        enrich_metadata(metaDataEnrichmentRequest)
+        get_enrichment_components(metaDataEnrichmentRequest)
     )
+
+    #TODO: Add a step to fill the whole Item (to be stored in the db)
     pipelineResponse = PipelineResponse(
         item_id=translationServiceRequest.item_id,
         title=translateServiceResponse.title,

@@ -8,7 +8,7 @@ from app.models.pipeline.Pipeline import (
     PipelineRequest,
     PipelineResponse,
 )
-from app.services.enrichment_service import translate_text, enrich_metadata
+from app.services.pipeline import run_pipeline
 
 # from app.database import get_db
 
@@ -23,7 +23,7 @@ router = APIRouter(
 @router.post("/execute", response_model=PipelineResponse)
 async def enrich(pipelineRequest: PipelineRequest):
     try:
-        pipelineResponse = enrich_metadata(pipelineRequest)
+        pipelineResponse = run_pipeline(pipelineRequest)
         return pipelineResponse
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

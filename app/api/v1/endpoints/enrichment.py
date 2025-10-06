@@ -7,7 +7,7 @@ from app.models.enrichment.enrichment import (
     MetaDataEnrichmentRequest,
     MetaDataEnrichmentResponse,
 )
-from app.services.enrichment_service import translate_text, enrich_metadata
+from app.services.enrichment_service import translate_text, get_enrichment_components
 
 # from app.database import get_db
 
@@ -22,7 +22,7 @@ router = APIRouter(
 @router.post("/enrich-metadata", response_model=MetaDataEnrichmentResponse)
 async def enrich(request: MetaDataEnrichmentRequest):
     try:
-        response = enrich_metadata(request)
+        response = get_enrichment_components(request)
         return response
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

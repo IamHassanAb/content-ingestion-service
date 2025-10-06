@@ -13,7 +13,7 @@ import os
 from app.llm.enrich import get_enricher_response
 
 
-def enrich_metadata(
+def get_enrichment_components(
     metadataEnrichmentRequest: MetaDataEnrichmentRequest,
 ) -> MetaDataEnrichmentResponse:
     """Enrich metadata using LLM."""
@@ -59,3 +59,4 @@ def translate_text(
     except Exception as e:
         logging.error(f"Unexpected error in translate_text: {e}", exc_info=True)
         return None
+
