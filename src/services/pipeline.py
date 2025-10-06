@@ -47,12 +47,13 @@ def run_pipeline(pipelineRequest: PipelineRequest) -> PipelineResponse:
         get_enrichment_components(metaDataEnrichmentRequest)
     )
 
+    # Step 3: Combine relevant data to fill all the details
     pipelineResponse = hydrate_pipeline_response(
         pipelineRequest, metaDataEnrichmentResponse, translateServiceResponse
     )
 
     logging.info(f"{RPOUT} : {pipelineResponse.model_dump()}")
-    # Step 3: Combine results into a single response
+    # Step 3: Return response
     return pipelineResponse
 
 

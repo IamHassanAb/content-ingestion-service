@@ -8,3 +8,4 @@ celery
 # openai
 groq
 redis
+flower

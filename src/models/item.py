@@ -11,7 +11,7 @@ class Author(BaseModel):
     name: str
     role: Optional[str] = Field(
         default="unknown",
-        regex="^(scholar|writer|translator|compiler|speaker|unknown)$",
+        pattern="^(scholar|writer|translator|compiler|speaker|unknown)$",
     )
     city: Optional[str] = None
     country: Optional[str] = None
@@ -57,7 +57,7 @@ class Media(BaseModel):
 
 
 class Audience(BaseModel):
-    level: str = Field(default="all", regex="^(beginner|intermediate|advanced|all)$")
+    level: str = Field(default="all", pattern="^(beginner|intermediate|advanced|all)$")
     intendedAudience: List[str] = []
 
 
@@ -74,7 +74,7 @@ class Provenance(BaseModel):
 class ItemSchema(BaseModel):
     id: Union[str, int]
     title: str
-    type: str = Field(..., regex="^(lecture|book|blog|article|tafseer|hadith|note)$")
+    type: str = Field(..., pattern="^(lecture|book|blog|article|tafseer|hadith|note)$")
     language: str
 
     author: Author
@@ -88,4 +88,3 @@ class ItemSchema(BaseModel):
     media: Optional[Media] = None
     audience: Optional[Audience] = None
     provenance: Optional[Provenance] = None
-

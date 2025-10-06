@@ -16,13 +16,21 @@ from src.llm.enrich import get_enricher_response
 def get_enrichment_components(
     metadataEnrichmentRequest: MetaDataEnrichmentRequest,
 ) -> MetaDataEnrichmentResponse:
-    """Enrich metadata using LLM."""
+    """Enrich metadata using LLM or return hardcoded response for testing."""
     logging.info(f"{RPIN} : {metadataEnrichmentRequest.model_dump()}")
-    metadataEnrichmentResponse = MetaDataEnrichmentResponse.model_validate_json(
-        get_enricher_response(metadataEnrichmentRequest)
+
+    # For test mode 
+    response = MetaDataEnrichmentResponse(
+        tags=["example", "test", "metadata"],
+        summary="This is a hardcoded summary for testing purposes."
     )
-    logging.info(f"{RPOUT} : {metadataEnrichmentResponse.model_dump()}")
-    return metadataEnrichmentResponse
+    logging.info(f"{RPOUT} : {response.model_dump()}")
+    return response
+
+    # # Actual logic using LLM
+    # response = get_enricher_response(metadataEnrichmentRequest)
+    # logging.info(f"{RPOUT} : {response.model_dump()}")
+    # return response
 
 
 def translate_text(

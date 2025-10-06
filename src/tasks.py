@@ -12,15 +12,15 @@ from src.services.redis_service import set_lecture_dto
 
 
 # 3. THE PRODUCER (Scheduled Task using Chord)
-@shared_task(bind=True, name="app.fetch_lecture_data")
-def fetch_lecture_data(self, taskRequest: LectureDetailsByScholarRequest) -> str:
+@shared_task(bind=True, name="src.tasks.fetch_lecture_data")
+def fetch_lecture_data(self, taskRequest: dict) -> str:
 
-    lectureDetailsByScholarResponses = get_lecture_details(request=taskRequest)
+    lectureDetailsByScholarResponses = get_lecture_details(request=LectureDetailsByScholarRequest(**taskRequest))
 
     # 1. Create Signatures for the parallel worker tasks
     signatures = [
-        run_pipeline_worker.s(transform_and_validate(lecture_response))
-        for lecture_response in lectureDetailsByScholarResponses
+        run_pipeline_worker.s(transform_and_validate(lecture_response).model_dump())
+        for lecture_response in lectureDetailsByScholarResponses[:3]
     ]
 
     # 2. Define the parallel group (the header of the chord)
@@ -41,7 +41,7 @@ def fetch_lecture_data(self, taskRequest: LectureDetailsByScholarRequest) -> str
 # This task executes the heavy-lifting pipeline.
 @shared_task(
     bind=True,
-    name="app.run_pipeline_worker",
+    name="src.tasks.run_pipeline_worker",
     pydantic=True,
     max_retries=3,  # Retry up to 3 times on failure
     default_retry_delay=60,  # Wait 60 seconds between retries
@@ -65,7 +65,7 @@ def run_pipeline_worker(self, request: PipelineRequest) -> PipelineResponse | No
 
 # 2. THE CALLBACK (Aggregation/Fan-in Task)
 # This task runs only AFTER all run_pipeline_worker tasks in the Group finish.
-@shared_task(name="app.aggregate_pipeline_results")
+@shared_task(name="src.tasks.aggregate_pipeline_results")
 def aggregate_pipeline_results(results: List[PipelineResponse]):
     """Collects and processes results from all parallel pipeline runs."""
     successful_count = sum(1 for r in results if r.item_id > 0)

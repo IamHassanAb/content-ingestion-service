@@ -1,11 +1,12 @@
-
 from celery import Celery
 from celery.schedules import crontab
+from dotenv import load_dotenv
+load_dotenv()
 
 celery_app = Celery("data_pipeline_process_manager")
 
 celery_app.config_from_envvar("CELERY_CONFIG_MODULE")
-celery_app.autodiscover_tasks()
+celery_app.autodiscover_tasks(["src"])
 
 
 # ------------------------------
@@ -20,8 +21,8 @@ celery_app.conf.beat_schedule = {
     # },
     # Example: run daily at 8 AM
     "fetch-lectures": {
-        "task": "app.tasks.fetch_lecture_data",
-        "schedule": crontab(hour=8, minute=0),
+        "task": "src.tasks.fetch_lecture_data",
+        "schedule": crontab(minute='*/1'),
         "kwargs": {"taskRequest": {"Page": 1, "PageSize": 1000, "ScholarId": 146}},
     },
 }

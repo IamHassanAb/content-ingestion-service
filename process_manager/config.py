@@ -26,16 +26,10 @@ CELERY_QUEUES = (
 # Missing: Routing Definitions
 CELERY_ROUTES = {
     # Route scheduled/callback tasks to the faster queue
-    "app.fetch_lecture_data": {"queue": "producer_queue"},
-    "app.aggregate_pipeline_results": {"queue": "producer_queue"},
+    "src.tasks.fetch_lecture_data": {"queue": "producer_queue"},
+    "src.tasks.aggregate_pipeline_results": {"queue": "producer_queue"},
     # Route heavy tasks to the dedicated queue
-    "app.run_pipeline_worker": {"queue": "pipeline_queue"},
-}
-
-CELERY_ROUTES = {
-    "app.tasks.fetch_lecture_data": {"queue": "producer_queue"},
-    "app.tasks.run_pipeline_worker": {"queue": "pipeline_queue"},
-    "app.tasks.aggregate_pipeline_results": {"queue": "producer_queue"},
+    "src.tasks.run_pipeline_worker": {"queue": "pipeline_queue"},
 }
 
 # Missing: Reliability Settings (Highly Recommended)
