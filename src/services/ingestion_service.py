@@ -1,6 +1,6 @@
 import requests
 from typing import List
-from app.utils.constants import RPIN, RPOUT
+from src.utils.constants import RPIN, RPOUT
 import logging
 import os
 from ..models.ingestion.LectureDetailsByScholar import (

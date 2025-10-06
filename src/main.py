@@ -1,6 +1,6 @@
 from fastapi import FastAPI
-from app.api.api import register_routes
-from app.utils.logging import configure_logging, LogLevels
+from src.api.api import register_routes
+from src.utils.logging import configure_logging, LogLevels
 from dotenv import load_dotenv
 
 load_dotenv()

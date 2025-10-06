@@ -1,4 +1,4 @@
-from typing import List, Optional, Dict, Union
+from typing import List, Optional, Union
 from pydantic import BaseModel, Field, HttpUrl
 from datetime import datetime
 
@@ -45,7 +45,7 @@ class DateInfo(BaseModel):
 class Content(BaseModel):
     summary: Optional[str] = None
     tags: List[str] = []
-    translations: Optional[Dict[str, str]] = None
+    translation: Optional[str] = None
 
 
 class Media(BaseModel):
@@ -88,3 +88,4 @@ class ItemSchema(BaseModel):
     media: Optional[Media] = None
     audience: Optional[Audience] = None
     provenance: Optional[Provenance] = None
+

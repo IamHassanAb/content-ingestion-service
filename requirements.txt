@@ -7,3 +7,4 @@ requests
 celery
 # openai
 groq
+redis

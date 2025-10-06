@@ -1,8 +1,7 @@
-import os
 
 from celery import Celery
-from celery.schedules import schedule, crontab
-from kombu import Queue, Exchange
+from celery.schedules import crontab
+
 celery_app = Celery("data_pipeline_process_manager")
 
 celery_app.config_from_envvar("CELERY_CONFIG_MODULE")
@@ -23,25 +22,24 @@ celery_app.conf.beat_schedule = {
     "fetch-lectures": {
         "task": "app.tasks.fetch_lecture_data",
         "schedule": crontab(hour=8, minute=0),
-        "kwargs": {"taskRequest": {"Page": 1, "PageSize": 1000, "ScholarId":146}}
+        "kwargs": {"taskRequest": {"Page": 1, "PageSize": 1000, "ScholarId": 146}},
     },
 }
-
 
 
 # from celery import Celery
 
 
 # # RabbitMQ is used as the Broker (AMQP port 5672 is standard)
-# BROKER_URL = 'amqp://guest:guest@localhost:5672//' 
+# BROKER_URL = 'amqp://guest:guest@localhost:5672//'
 # # MongoDB is used as the Result Backend
-# BACKEND_URL = 'mongodb://localhost:27017/celery_results' 
+# BACKEND_URL = 'mongodb://localhost:27017/celery_results'
 
 # app = Celery(
 #     'data_pipeline_project',
 #     broker=BROKER_URL,
 #     backend=BACKEND_URL,
-#     include=['app.tasks'] 
+#     include=['app.tasks']
 # )
 
 # # 1. Define custom queues for isolation [9]
@@ -64,7 +62,7 @@ celery_app.conf.beat_schedule = {
 #     # Results will expire after 1 hour (3600 seconds) [12]
 #     result_expires=3600,
 #     # Celery Beat uses UTC by default, ensure timezone is specified [13]
-#     timezone='UTC', 
+#     timezone='UTC',
 #     # Enable late acknowledgment for reliability (task is ack'd only after it succeeds) [14, 15]
 #     task_acks_late=True,
 #     # Configure serializer for results, matching MongoDB compatibility (default JSON is fine) [16]

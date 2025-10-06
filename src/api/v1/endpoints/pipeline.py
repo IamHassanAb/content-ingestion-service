@@ -1,14 +1,10 @@
 # I might need this in the future.
 from fastapi import APIRouter, HTTPException
-from app.models.enrichment.Translation import (
-    TranslationServiceRequest,
-    TranslationServiceResponse,
-)
-from app.models.pipeline.Pipeline import (
+from src.models.pipeline.Pipeline import (
     PipelineRequest,
     PipelineResponse,
 )
-from app.services.pipeline import run_pipeline
+from src.services.pipeline import run_pipeline
 
 # from app.database import get_db
 

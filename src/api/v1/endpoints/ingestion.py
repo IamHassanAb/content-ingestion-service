@@ -1,10 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException
 from typing import List
-from app.models.ingestion.LectureDetailsByScholar import (
+from src.models.ingestion.LectureDetailsByScholar import (
     LectureDetailsByScholarRequest,
     LectureDetailsByScholarResponse,
 )
-from app.services.ingestion_service import get_lecture_details
+from src.services.ingestion_service import get_lecture_details
 
 # from app.database import get_db
 

@@ -1,4 +1,4 @@
-from app.models.enrichment.enrichment import (
+from src.models.enrichment.enrichment import (
     MetaDataEnrichmentRequest,
     MetaDataEnrichmentResponse,
 )
@@ -7,10 +7,10 @@ from ..models.enrichment.Translation import (
     TranslationServiceResponse,
 )
 import requests
-from app.utils.constants import RPIN, RPOUT
+from src.utils.constants import RPIN, RPOUT
 import logging
 import os
-from app.llm.enrich import get_enricher_response
+from src.llm.enrich import get_enricher_response
 
 
 def get_enrichment_components(
@@ -59,4 +59,3 @@ def translate_text(
     except Exception as e:
         logging.error(f"Unexpected error in translate_text: {e}", exc_info=True)
         return None
-

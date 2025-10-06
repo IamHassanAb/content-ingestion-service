@@ -1,13 +1,13 @@
 from fastapi import APIRouter, HTTPException
-from app.models.enrichment.Translation import (
+from src.models.enrichment.Translation import (
     TranslationServiceRequest,
     TranslationServiceResponse,
 )
-from app.models.enrichment.enrichment import (
+from src.models.enrichment.enrichment import (
     MetaDataEnrichmentRequest,
     MetaDataEnrichmentResponse,
 )
-from app.services.enrichment_service import translate_text, get_enrichment_components
+from src.services.enrichment_service import translate_text, get_enrichment_components
 
 # from app.database import get_db
 

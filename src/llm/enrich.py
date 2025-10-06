@@ -1,7 +1,7 @@
 import os
 from groq import Groq
-from app.llm.prompts import get_prompt
-from app.models.enrichment.enrichment import MetaDataEnrichmentRequest
+from src.llm.prompts import get_prompt
+from src.models.enrichment.enrichment import MetaDataEnrichmentRequest
 
 
 def get_enricher_response(input: MetaDataEnrichmentRequest) -> str:

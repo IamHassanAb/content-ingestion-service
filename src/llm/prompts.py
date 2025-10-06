@@ -1,4 +1,4 @@
-from app.models.enrichment.enrichment import (
+from src.models.enrichment.enrichment import (
     MetaDataEnrichmentRequest,
     MetaDataEnrichmentResponse,
 )
