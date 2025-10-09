@@ -49,7 +49,7 @@ class LectureDetailsByScholarResponse(BaseModel):
     itemDate: Optional[str] = None
     islamicDate: Optional[str] = None
     language: str
-    link: HttpUrl
+    link: str
     views: Optional[int] = None
     audioFile: Optional[str] = None
     imageFile: Optional[str] = None

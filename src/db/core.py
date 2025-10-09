@@ -6,7 +6,7 @@ import os
 class MongoDBConnection:
     def __init__(self, uri=None, db_name=None):
         self.uri = uri or os.getenv("MONGODB_URI", "mongodb://localhost:27017")
-        self.db_name = db_name or os.getenv("MONGODB_DB", "balagh_bot")
+        self.db_name = db_name or os.getenv("MONGODB_DB", "balagh_db")
         self.client = None
         self.db = None
 

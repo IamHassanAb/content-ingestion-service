@@ -1,5 +1,7 @@
+import logging
 from celery import shared_task, group, chord
 from typing import List
+from celery.exceptions import MaxRetriesExceededError
 from src.models.pipeline.Pipeline import PipelineRequest, PipelineResponse
 from src.models.ingestion.LectureDetailsByScholar import (
     LectureDetailsByScholarRequest,
@@ -7,91 +9,111 @@ from src.models.ingestion.LectureDetailsByScholar import (
 )
 from src.services.pipeline import run_pipeline
 from src.services.ingestion_service import get_lecture_details
-from celery.exceptions import MaxRetriesExceededError
-from src.services.redis_service import set_lecture_dto
+from src.repository.item_repo import insert_many_items, get_all_lecture_ids
 
+logger = logging.getLogger(__name__)
 
+# ---------------------------------------------------------
 # 3. THE PRODUCER (Scheduled Task using Chord)
+# ---------------------------------------------------------
 @shared_task(bind=True, name="src.tasks.fetch_lecture_data")
-def fetch_lecture_data(self, taskRequest: dict) -> str:
+def fetch_lecture_data(self, task_request: dict) -> str:
+    logger.info("Starting fetch_lecture_data with request: %s", task_request)
 
-    lectureDetailsByScholarResponses = get_lecture_details(request=LectureDetailsByScholarRequest(**taskRequest))
+    lecture_details_by_scholar_responses = get_lecture_details(
+        request=LectureDetailsByScholarRequest(**task_request)
+    )
+    logger.info("Fetched %d lecture records.", len(lecture_details_by_scholar_responses))
 
-    # 1. Create Signatures for the parallel worker tasks
+    lecture_ids_from_db = get_all_lecture_ids()
+    if lecture_ids_from_db:
+        db_ids = {d["id"] for d in lecture_ids_from_db}
+        before_count = len(lecture_details_by_scholar_responses)
+        lecture_details_by_scholar_responses = [
+            d for d in lecture_details_by_scholar_responses if d["id"] not in db_ids
+        ]
+        after_count = len(lecture_details_by_scholar_responses)
+        logger.info("Filtered out %d existing lectures; %d remain.", before_count - after_count, after_count)
+
     signatures = [
         run_pipeline_worker.s(transform_and_validate(lecture_response).model_dump())
-        for lecture_response in lectureDetailsByScholarResponses[:3]
+        for lecture_response in lecture_details_by_scholar_responses
     ]
 
-    # 2. Define the parallel group (the header of the chord)
     parallel_header = group(signatures)
-
-    # 3. Define the aggregation task (the callback of the chord)
     callback_task = aggregate_pipeline_results.s()
 
-    # 4. Launch the chord: run the header (Group) in parallel, then run the callback
-    # The result of this call is the AsyncResult of the *callback* task.
     workflow_result = chord(parallel_header)(callback_task)
 
-    # You can return the result ID for tracking the entire batch
+    logger.info("Chord launched with %d worker tasks. Workflow ID: %s", len(signatures), workflow_result.id)
     return f"Workflow submitted: {workflow_result.id}"
 
 
+# ---------------------------------------------------------
 # 1. THE CONSUMER (Parallel Worker Task)
-# This task executes the heavy-lifting pipeline.
+# ---------------------------------------------------------
 @shared_task(
     bind=True,
     name="src.tasks.run_pipeline_worker",
     pydantic=True,
-    max_retries=3,  # Retry up to 3 times on failure
-    default_retry_delay=60,  # Wait 60 seconds between retries
+    max_retries=3,
+    default_retry_delay=60,
+    rate_limit="10/m",  # 10 requests per minute across workers
 )
 def run_pipeline_worker(self, request: PipelineRequest) -> PipelineResponse | None:
-    """Run the ingestion pipeline with built-in retry logic."""
+    logger.info("Running pipeline worker task: %s", self.request.id)
     try:
-        # The run_pipeline function is where network/IO errors might occur.
-        return run_pipeline(request)
+        response = run_pipeline(request)
+        logger.info("Task %s completed successfully.", self.request.id)
+        return response
     except ConnectionError as exc:
-        # If a transient network error occurs, retry the task.
+        logger.warning(
+            "Task %s failed due to connection error. Retrying in %ss (attempt %d).",
+            self.request.id,
+            self.default_retry_delay,
+            self.request.retries + 1,
+        )
         try:
-            print(
-                f"Task {self.request.id} failed, retrying in {self.default_retry_delay}s. Attempt {self.request.retries + 1}"
-            )
             raise self.retry(exc=exc)
         except MaxRetriesExceededError:
-            # If maximum retries are hit, log failure and allow task to fail.
-            print(f"Task {self.request.id} failed after maximum retries.")
+            logger.error("Task %s failed after maximum retries.", self.request.id)
 
 
+# ---------------------------------------------------------
 # 2. THE CALLBACK (Aggregation/Fan-in Task)
-# This task runs only AFTER all run_pipeline_worker tasks in the Group finish.
+# ---------------------------------------------------------
 @shared_task(name="src.tasks.aggregate_pipeline_results")
 def aggregate_pipeline_results(results: List[PipelineResponse]):
-    """Collects and processes results from all parallel pipeline runs."""
-    successful_count = sum(1 for r in results if r.item_id > 0)
+    logger.info("Aggregating %d pipeline results.", len(results))
+
+    successful_results = [
+        result.get("item") for result in results if result.get("item") and result.get("item").get("id")
+    ]
+    successful_count = len(successful_results)
     failed_count = len(results) - successful_count
 
-    # In a real app, you would log these results, update a database, or send a final notification.
-    # TODO: Add logging and cache update here.
-    # Connect to Redis (adjust host/port/db as needed)
-    # Store each pipeline result in Redis using item_id as key
-    for result in results:
-        # add logic to add resutls in cache
-        set_lecture_dto(result.to_flat_dict())
+    logger.info(
+        "Pipeline aggregation complete. Successful: %d | Failed: %d",
+        successful_count,
+        failed_count,
+    )
 
-    print("\n--- Aggregation Complete ---")
-    print(f"Total tasks run: {len(results)}")
-    print(f"Successful pipelines: {successful_count}")
-    print(f"Failed or permanently retried pipelines: {failed_count}")
-    return {"total": len(results), "successes": successful_count}
+    db_insert_result = insert_many_items(successful_results)
+    if db_insert_result:
+        logger.info("Successfully inserted %d results into DB.", successful_count)
+    else:
+        logger.warning("DB insert failed or returned empty result.")
+
+    summary = {"total": len(results), "successes": successful_count, "failures": failed_count}
+    logger.info("Aggregation summary: %s", summary)
+    return summary
 
 
-# Move this in Utils
-
-
-def transform_and_validate(
-    lectureDetailsByScholarResponse: LectureDetailsByScholarResponse,
-) -> PipelineRequest:
+# ---------------------------------------------------------
+# 3. Utility function
+# ---------------------------------------------------------
+def transform_and_validate(lectureDetailsByScholarResponse: LectureDetailsByScholarResponse) -> PipelineRequest:
+    logger.debug("Transforming and validating lecture details: %s", lectureDetailsByScholarResponse.id)
     pipelineRequest = PipelineRequest(
         lecture_details_by_scholar=lectureDetailsByScholarResponse,
         item_id=str(lectureDetailsByScholarResponse.id),

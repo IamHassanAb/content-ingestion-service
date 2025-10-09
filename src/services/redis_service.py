@@ -13,7 +13,7 @@ r = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, db=REDIS_DB, decode_responses=
 
 def set_lecture_dto(dto: dict, ttl: Optional[int] = REDIS_TTL):
     itemDto = ItemSchema.model_validate(dto)
-    r.set(f"lecture:{itemDto.id}", dto, ex=ttl)
+    r.set(f"lecture:{itemDto.id}", itemDto.model_dump_json(), ex=ttl)
 
 
 def get_lecture_dto(item_id: str) -> ItemSchema | None:

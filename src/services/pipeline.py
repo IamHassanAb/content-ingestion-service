@@ -1,3 +1,4 @@
+from src.services.redis_service import set_lecture_dto
 from src.models.enrichment.enrichment import (
     MetaDataEnrichmentRequest,
     MetaDataEnrichmentResponse,
@@ -52,6 +53,9 @@ def run_pipeline(pipelineRequest: PipelineRequest) -> PipelineResponse:
         pipelineRequest, metaDataEnrichmentResponse, translateServiceResponse
     )
 
+    #Step 4: Store the pipelineResponse in redis cache.
+    set_lecture_dto(pipelineResponse.to_flat_dict())
+    
     logging.info(f"{RPOUT} : {pipelineResponse.model_dump()}")
     # Step 3: Return response
     return pipelineResponse

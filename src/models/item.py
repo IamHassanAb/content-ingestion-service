@@ -38,7 +38,7 @@ class HadithReference(BaseModel):
 
 
 class DateInfo(BaseModel):
-    gregorian: datetime
+    gregorian: Optional[str] = None
     islamic: Optional[str] = None
 
 

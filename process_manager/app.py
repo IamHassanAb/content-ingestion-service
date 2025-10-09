@@ -23,7 +23,7 @@ celery_app.conf.beat_schedule = {
     "fetch-lectures": {
         "task": "src.tasks.fetch_lecture_data",
         "schedule": crontab(minute='*/1'),
-        "kwargs": {"taskRequest": {"Page": 1, "PageSize": 1000, "ScholarId": 146}},
+        "kwargs": {"task_request": {"Page": 1, "PageSize": 1000, "ScholarId": 146}},
     },
 }
 
