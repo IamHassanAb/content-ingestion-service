@@ -7,3 +7,7 @@ pymongo
 slowapi
 requests
 celery
+# openai
+groq
+redis
+flower
