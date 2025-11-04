@@ -1,0 +1,76 @@
+services:
+  fastapi_app:
+    build: .
+    container_name: fastapi_app
+    command: uvicorn src.main:app --host 0.0.0.0 --port 8888 --reload
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8888"
+    networks:
+      - balagh_network
+    
+
+  celery_worker:
+    build: .
+    container_name: pipeline_worker
+    command: celery -A process_manager.app worker -l info
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+    networks:
+      - balagh_network
+    environment:
+      - PYTHONPATH=/app
+
+  celery_beat:
+    build: .
+    container_name: fetch_lectures_beat
+    command: celery -A process_manager.app beat -l info
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+    networks:
+      - balagh_network
+    environment:
+      - PYTHONPATH=/app
+
+  # ----- run flower from image
+  # TODO: look at how to resolve the issue of (exec: "flower": executable file not found in $PATH)
+  # flower:
+  #   image: mher/flower:2.0.1
+  #   container_name: celery_flower
+  #   command: >
+  #     flower --broker=amqp://guest:guest@rabbitmq:5672// --port=5555
+  #   ports:
+  #     - "5555:5555"
+  #   networks:
+  #     - balagh_network
+  #   depends_on:
+  #     - celery_worker
+
+  # ---- run flower from within python environment
+  flower:
+    build: .
+    container_name: celery_flower
+    command: celery -A process_manager.app flower --port=5555 --broker=amqp://guest:guest@rabbitmq_container:5672//
+    env_file:
+      - .env
+    environment:
+      - PYTHONPATH=/app
+    networks:
+      - balagh_network
+    ports:
+      - "5555:5555"
+    depends_on:
+      - celery_worker
+
+
+networks:
+  balagh_network:
+    external: true
+    name: balagh_network
