@@ -1,4 +1,10 @@
 # Content Ingestion Service
+![Python](https://img.shields.io/badge/python-3.11+-blue)
+![FastAPI](https://img.shields.io/badge/FastAPI-async-green)
+![Celery](https://img.shields.io/badge/Celery-distributed-yellowgreen)
+![MongoDB](https://img.shields.io/badge/MongoDB-NoSQL-green)
+![RabbitMQ](https://img.shields.io/badge/RabbitMQ-message--broker-orange)
+![Docker](https://img.shields.io/badge/Docker-containerized-blue)
 
 > **Intelligent data pipeline for extracting, enriching, and processing educational content at scale**
 
