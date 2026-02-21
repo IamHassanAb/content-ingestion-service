@@ -37,7 +37,6 @@ The Content Ingestion Service is designed to:
 - [Development](#-development)
 - [Troubleshooting](#-troubleshooting)
 - [Contributing](#-contributing)
-- [License](#-license)
 
 ---
 
@@ -668,12 +667,6 @@ Found a bug? Please report it on GitHub Issues with:
 - Steps to reproduce
 - Expected vs. actual behavior
 - Environment details (OS, Python version, etc.)
-
----
-
-## 📄 License
-
-This project is licensed under the **MIT License** — see [LICENSE](LICENSE) file for details.
 
 ---
 
