@@ -28,12 +28,12 @@ The Content Ingestion Service is designed to:
 ## 📋 Table of Contents
 
 - [Quick Start](#-quick-start)
-- [Architecture](#architecture)
-- [Installation](#installation)
-- [Configuration](#configuration)
-- [API Documentation](#api-documentation)
-- [Background Jobs & Scheduling](#background-jobs--scheduling)
-- [Database Schema](#database-schema)
+- [Architecture](#-architecture)
+- [Installation](#-installation)
+- [Configuration](#-configuration)
+- [API Documentation](#-api-documentation)
+- [Background Jobs & Scheduling](#-background-jobs--scheduling)
+- [Database Schema](#-database-schema)
 - [Development](#development)
 - [Troubleshooting](#troubleshooting)
 - [Contributing](#contributing)
