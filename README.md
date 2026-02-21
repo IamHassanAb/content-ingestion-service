@@ -28,7 +28,7 @@ The Content Ingestion Service is designed to:
 ## 📋 Table of Contents
 
 - [Quick Start](#-quick-start)
-- [Architecture](#-architecture)
+- [Architecture](#%EF%B8%8F-architecture)
 - [Installation](#-installation)
 - [Configuration](#-configuration)
 - [API Documentation](#-api-documentation)
