@@ -30,7 +30,7 @@ The Content Ingestion Service is designed to:
 - [Quick Start](#-quick-start)
 - [Architecture](#%EF%B8%8F-architecture)
 - [Installation](#-installation)
-- [Configuration](#-configuration)
+- [Configuration](#%EF%B8%8F-configuration)
 - [API Documentation](#-api-documentation)
 - [Background Jobs & Scheduling](#-background-jobs--scheduling)
 - [Database Schema](#-database-schema)
