@@ -10,6 +10,9 @@
 
 A production-ready FastAPI service that automates the ingestion, translation, and enrichment of lecture data. Built with distributed task processing, real-time APIs, and robust data persistence.
 
+<img width="6301" height="1819" alt="image" src="https://github.com/user-attachments/assets/e8005461-2593-470a-a610-5550a0d69add" />
+
+
 ---
 
 ## 🎯 Overview
