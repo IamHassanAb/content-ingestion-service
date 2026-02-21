@@ -34,10 +34,10 @@ The Content Ingestion Service is designed to:
 - [API Documentation](#-api-documentation)
 - [Background Jobs & Scheduling](#-background-jobs--scheduling)
 - [Database Schema](#-database-schema)
-- [Development](#development)
-- [Troubleshooting](#troubleshooting)
-- [Contributing](#contributing)
-- [License](#license)
+- [Development](#-development)
+- [Troubleshooting](#-troubleshooting)
+- [Contributing](#-contributing)
+- [License](#-license)
 
 ---
 
