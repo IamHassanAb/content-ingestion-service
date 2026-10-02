@@ -6,6 +6,7 @@
 ![RabbitMQ](https://img.shields.io/badge/RabbitMQ-message--broker-orange)
 ![Docker](https://img.shields.io/badge/Docker-containerized-blue)
 
+> Part of **Balagh** — a RAG platform split into two services: this one (ingestion) and [embedding-index-service](https://github.com/IamHassanAb/embedding-index-service).
 > **Intelligent data pipeline for extracting, enriching, and processing educational content at scale**
 
 A production-ready FastAPI service that automates the ingestion, translation, and enrichment of lecture data. Built with distributed task processing, real-time APIs, and robust data persistence.
